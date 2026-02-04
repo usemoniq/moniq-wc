@@ -1,0 +1,68 @@
+/* Everydaymoney payment method styling - Bigger icon on right */
+.wc-block-components-radio-control__option .wc-block-components-payment-method-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+}
+
+.wc-block-components-payment-method-label__text {
+    flex-grow: 1;
+    font-weight: 500;
+    color: #2c3338;
+    font-size: 16px;
+}
+
+.wc-block-components-payment-method-label__icon {
+    height: 48px; /* Increased from 24px */
+    width: auto;
+    max-width: 140px; /* Increased from 80px */
+    object-fit: contain;
+    margin-left: auto;
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
+}
+
+/* Hover effect for the icon */
+.wc-block-components-radio-control__option:hover .wc-block-components-payment-method-label__icon {
+    opacity: 1;
+}
+
+/* When the payment method is selected */
+.wc-block-components-radio-control__option.is-selected .wc-block-components-payment-method-label__icon {
+    opacity: 1;
+}
+
+/* Ensure the radio button and label are properly aligned */
+.wc-block-components-radio-control__option label {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    padding: 8px 0; /* Add some vertical padding */
+}
+
+/* Additional styling for the payment method content/description */
+.wc-block-components-payment-method-icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* Responsive design for tablets */
+@media (max-width: 768px) {
+    .wc-block-components-payment-method-label__icon {
+        height: 40px; /* Slightly smaller on tablets */
+        max-width: 120px;
+    }
+}
+
+/* Responsive design for mobile */
+@media (max-width: 480px) {
+    .wc-block-components-payment-method-label__icon {
+        height: 32px; /* Increased from 20px */
+        max-width: 100px; /* Increased from 60px */
+    }
+}
