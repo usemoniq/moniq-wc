@@ -18,6 +18,7 @@ class WC_Moniq_Gateway extends WC_Payment_Gateway {
     public $public_key;
     public $api_secret;
     public $debug;
+    public $enable_chat;
     private $webhook_secret;
 
     public function __construct() {
@@ -39,6 +40,7 @@ class WC_Moniq_Gateway extends WC_Payment_Gateway {
         $this->api_secret     = $this->get_option( 'api_secret' );
         $this->webhook_secret = $this->get_option( 'webhook_secret' );
         $this->debug          = 'yes' === $this->get_option( 'debug', 'no' );
+        $this->enable_chat    = 'yes' === $this->get_option( 'enable_chat', 'no' );
 
         if ( class_exists( 'WC_Moniq_Logger' ) ) {
             $this->logger = new WC_Moniq_Logger( $this->debug );
@@ -53,6 +55,11 @@ class WC_Moniq_Gateway extends WC_Payment_Gateway {
         add_action( 'woocommerce_api_wc_moniq_gateway', array( $this, 'handle_webhook' ) );
         add_action( 'woocommerce_checkout_create_order', array( $this, 'save_order_metadata_on_checkout' ), 10, 2 );
         add_action( 'woocommerce_blocks_loaded', array( $this, 'woocommerce_gateway_moniq_woocommerce_block_support' ) );
+
+        // Enqueue chat widget on frontend if enabled
+        if ( $this->enable_chat && ! empty( $this->public_key ) ) {
+            add_action( 'wp_footer', array( $this, 'enqueue_chat_widget' ) );
+        }
     }
 
     public function init_form_fields() {
@@ -107,6 +114,18 @@ class WC_Moniq_Gateway extends WC_Payment_Gateway {
                     '<code>' . WC()->api_request_url( 'wc_moniq_gateway' ) . '</code>'
                 ),
                 'default'     => '',
+            ),
+            'chat_settings' => array(
+                'title'       => __( 'Komposa Chat', 'moniq-gateway' ),
+                'type'        => 'title',
+                'description' => __( 'Enable AI-powered customer support chat on your store.', 'moniq-gateway' ),
+            ),
+            'enable_chat' => array(
+                'title'       => __( 'Enable Chat Widget', 'moniq-gateway' ),
+                'type'        => 'checkbox',
+                'label'       => __( 'Enable Komposa AI chat widget on your store', 'moniq-gateway' ),
+                'default'     => 'no',
+                'description' => __( 'When enabled, a chat widget will appear on your store for customer support.', 'moniq-gateway' ),
             ),
             'advanced' => array(
                 'title' => __( 'Advanced Options', 'moniq-gateway' ),
@@ -548,6 +567,31 @@ class WC_Moniq_Gateway extends WC_Payment_Gateway {
         <table class="form-table">
             <?php $this->generate_settings_html(); ?>
         </table>
+        <?php
+    }
+
+    /**
+     * Enqueue the Komposa chat widget on the frontend.
+     */
+    public function enqueue_chat_widget() {
+        // Don't load in admin or if public key is not set
+        if ( is_admin() || empty( $this->public_key ) ) {
+            return;
+        }
+
+        $public_key = esc_attr( $this->public_key );
+        $widget_url = apply_filters( 'moniq_chat_widget_url', 'https://komposa.com/chat.js' );
+
+        ?>
+        <!-- Komposa Chat Widget -->
+        <script>
+            (function(w,d,s,o,f,js,fjs){
+                w['KomposaChat']=o;w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};
+                js=d.createElement(s),fjs=d.getElementsByTagName(s)[0];
+                js.id=o;js.src=f;js.async=1;fjs.parentNode.insertBefore(js,fjs);
+            }(window,document,'script','komposa','<?php echo esc_url( $widget_url ); ?>'));
+            komposa('init', '<?php echo $public_key; ?>');
+        </script>
         <?php
     }
 }

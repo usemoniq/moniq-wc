@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name:       Moniq Payment Gateway
- * Plugin URI:        https://moniq.app/integrations
+ * Plugin URI:        https://usemoniq.app
  * Description:       Accept payments through Moniq. Customers are redirected to a secure checkout page to complete their purchase.
  * Version:           2.0.0
  * Author:            Moniq
- * Author URI:        https://moniq.app
+ * Author URI:        https://usemoniq.app
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * WC requires at least: 3.5
