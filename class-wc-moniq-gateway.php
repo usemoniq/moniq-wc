@@ -580,7 +580,7 @@ class WC_Moniq_Gateway extends WC_Payment_Gateway {
         }
 
         $public_key = esc_attr( $this->public_key );
-        $widget_url = apply_filters( 'moniq_chat_widget_url', 'https://komposa.com/chat.js' );
+        $widget_url = apply_filters( 'moniq_chat_widget_url', 'https://www.komposa.com/chat.js' );
 
         ?>
         <!-- Komposa Chat Widget -->
@@ -590,7 +590,11 @@ class WC_Moniq_Gateway extends WC_Payment_Gateway {
                 js=d.createElement(s),fjs=d.getElementsByTagName(s)[0];
                 js.id=o;js.src=f;js.async=1;fjs.parentNode.insertBefore(js,fjs);
             }(window,document,'script','komposa','<?php echo esc_url( $widget_url ); ?>'));
-            komposa('init', '<?php echo $public_key; ?>');
+            komposa('init', {
+                publicKey: '<?php echo $public_key; ?>',
+                title: '<?php echo esc_js( get_bloginfo( 'name' ) ); ?> Support',
+                greeting: 'Hi! How can we help you today?'
+            });
         </script>
         <?php
     }
